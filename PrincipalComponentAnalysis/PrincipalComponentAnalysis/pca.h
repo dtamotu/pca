@@ -34,7 +34,7 @@ public:
         assert(D.rows() == D.cols());
         int N = D.rows();
 
-        // 1. Compute the mean image
+        // 1. Asegurarse de que la Matriz sea Cuadrada
         MatrixXd mean(1, N);
         mean.setZero();
 
@@ -46,7 +46,8 @@ public:
             }
         }
 
-        // 2. Subtract mean image from the data set to get mean centered data vector
+        // 2 Cálculo de la Media y Centrado de Datos: Calcula la media
+        // de cada columna de D y luego centra los datos restando esta media.
         MatrixXd U = D;
 
         for (int i = 0; i < N; i++)
@@ -57,24 +58,24 @@ public:
             }
         }
 
-        // 3. Compute the covariance matrix from the mean centered data matrix
+        // 3. Cálculo de la Matriz de Covarianza a partir de los datos centrados.
         MatrixXd covariance = (U.transpose() * U) / (double)(N);
 
-        // cout << covariance << endl;
+        cout <<"covarianza:  "<< endl<<covariance << endl << endl << endl;
 
-        // 4. Calculate the eigenvalues and eigenvectors for the covariance matrix
+        // 4. Cálculo de Autovalores y Autovectores
         EigenSolver<MatrixXd> solver(covariance);
         MatrixXd eigenVectors = solver.eigenvectors().real();
         VectorXd eigenValues = solver.eigenvalues().real();
 
-        // 5. Normalize the eigen vectors
+        // 5. Normalización de Autovectores: Normaliza los autovectores obtenidos.
         eigenVectors.normalize();
 
-        // cout << eigenVectors << endl;
-        // cout << eigenValues << endl;
+        cout <<"Autovectores" << endl << eigenVectors << endl;
+        cout << "Autovalores"<<endl<< eigenValues << endl << endl << endl << endl;
 
-        // 6. Find out an eigenvector with the largest eigenvalue
-        //    which distingushes the data
+        // 6. Selección del Componente Principal: Ordena los autovalores y 
+        // selecciona el autovector asociado con el mayor autovalor.
         sort(eigenValues.derived().data(), eigenValues.derived().data() + eigenValues.derived().size());
         short index = eigenValues.size() - 1;
         VectorXd featureVector = eigenVectors.row(index);
